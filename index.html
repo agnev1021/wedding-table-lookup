@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Table Lookup</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="topbar">
+            <div class="topbar-inner">
+                <div class="topbar-item">May 2, 2026</div>
+                <div class="topbar-item">Boston, MA</div>
+            </div>
+        </div>
+        <div class="masthead">
+            <h1 class="site-title">JACK &amp; VERONICA</h1>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="container">
+            <section class="search-section">
+                <div class="search-container">
+                    <h2 class="page-heading">Find Your Table</h2>
+                    <label for="guest-search" class="search-label">Enter your first or last name:</label>
+                    <input 
+                        type="text" 
+                        id="guest-search" 
+                        class="search-input" 
+                        placeholder="Search for your name..."
+                        autocomplete="off"
+                    >
+                    <button id="search-btn" class="cta-button">Find My Table</button>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <div id="search-results" class="search-results"></div>
+            </section>
+
+            <section id="table-section" class="table-section hidden">
+                <div id="table-card" class="library-card"></div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
