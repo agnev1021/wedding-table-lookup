@@ -1,5 +1,6 @@
 let guests = [];
 let guestsById = new Map();
+let guestsByPairId = new Map();
 
 let els = null;
 
@@ -187,13 +188,44 @@ function renderGuestTableCard(guest) {
     els.tableSection.classList.remove('hidden');
     const tableColorClass = getTableColorClass(guest.table);
 
+    let pairedGuestHtml = '';
+    if (guest.pairId) {
+        const pairedGuests = guestsByPairId.get(guest.pairId) || [];
+        const otherGuest = pairedGuests.find(g => g.id !== guest.id);
+        
+        if (otherGuest) {
+            pairedGuestHtml = `
+                <div class="paired-guest-suggestion">
+                    <p class="suggestion-label">Looking for someone else?</p>
+                    <button class="paired-guest-button" data-guest-id="${escapeHtml(otherGuest.id)}">
+                        ${escapeHtml(otherGuest.displayName)}
+                    </button>
+                </div>
+            `;
+        }
+    }
+
     els.tableCard.innerHTML = `
         <div class="checkout-meta">
             <div class="meta-row"><span class="meta-label">BORROWER:</span> <span class="meta-value">${escapeHtml(guest.firstName)} ${escapeHtml(guest.lastName)}</span></div>
             <div class="meta-row"><span class="meta-label">TITLE:</span> <span class="meta-value">Table Assignment</span></div>
         </div>
         <div class="big-table-number ${escapeHtml(tableColorClass)}" aria-label="Table number">${escapeHtml(guest.table)}</div>
+        ${pairedGuestHtml}
     `;
+
+    if (guest.pairId) {
+        const pairedButton = els.tableCard.querySelector('[data-guest-id]');
+        if (pairedButton) {
+            pairedButton.addEventListener('click', () => {
+                const id = pairedButton.getAttribute('data-guest-id');
+                const pairedGuest = guestsById.get(id);
+                if (pairedGuest) {
+                    renderGuestTableCard(pairedGuest);
+                }
+            });
+        }
+    }
 }
 
 function findMatches(query) {
@@ -257,6 +289,7 @@ async function loadGuestCsv(config) {
             table: headers.indexOf('table'),
             display: headers.indexOf('display_name'),
             id: headers.indexOf('id'),
+            pairId: headers.indexOf('pair_id'),
         };
 
         const required = [idx.first, idx.last, idx.table];
@@ -267,6 +300,7 @@ async function loadGuestCsv(config) {
 
         const loaded = [];
         const byId = new Map();
+        const byPairId = new Map();
 
         for (let r = 1; r < rows.length; r++) {
             const row = rows[r];
@@ -282,6 +316,8 @@ async function loadGuestCsv(config) {
             const providedId = idx.id !== -1 ? String(row[idx.id] ?? '').trim() : '';
             const id = providedId || `${normalizeText(firstName)}-${normalizeText(lastName)}-${r}`;
 
+            const pairId = idx.pairId !== -1 ? String(row[idx.pairId] ?? '').trim() : '';
+
             const guest = {
                 id,
                 firstName,
@@ -290,14 +326,23 @@ async function loadGuestCsv(config) {
                 displayName,
                 firstNorm: normalizeText(firstName),
                 lastNorm: normalizeText(lastName),
+                pairId,
             };
 
             loaded.push(guest);
             byId.set(id, guest);
+
+            if (pairId) {
+                if (!byPairId.has(pairId)) {
+                    byPairId.set(pairId, []);
+                }
+                byPairId.get(pairId).push(guest);
+            }
         }
 
         guests = loaded;
         guestsById = byId;
+        guestsByPairId = byPairId;
 
         if (guests.length === 0) {
             showStatusMessage('Guest list loaded, but no valid rows were found.');
@@ -322,6 +367,7 @@ function initWeddingTableLookup(options = {}) {
     els = resolved;
     guests = [];
     guestsById = new Map();
+    guestsByPairId = new Map();
 
     els.searchBtn.addEventListener('click', doSearch);
     els.input.addEventListener('keydown', (e) => {

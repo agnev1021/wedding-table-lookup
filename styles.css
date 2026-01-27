@@ -241,6 +241,45 @@ body {
     margin-top: 0.75rem;
 }
 
+.paired-guest-suggestion {
+    position: relative;
+    z-index: 2;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(0, 0, 0, 0.55);
+    text-align: center;
+}
+
+.suggestion-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: 0.75rem;
+}
+
+.paired-guest-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #0b6f55;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'EB Garamond', serif;
+}
+
+.paired-guest-button:hover {
+    background-color: #085a44;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(11, 111, 85, 0.3);
+}
+
+.paired-guest-button:active {
+    transform: translateY(0);
+}
+
 .card-header {
     text-align: center;
     margin-bottom: 1.5rem;
