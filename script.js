@@ -233,7 +233,10 @@ function findMatches(query) {
     if (!q) return [];
 
     return guests
-        .filter((g) => g.firstNorm.includes(q) || g.lastNorm.includes(q))
+        .filter((g) => {
+            const fullName = `${g.firstNorm} ${g.lastNorm}`;
+            return g.firstNorm.includes(q) || g.lastNorm.includes(q) || fullName.includes(q);
+        })
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
 }
 
