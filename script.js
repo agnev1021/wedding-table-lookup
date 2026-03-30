@@ -274,10 +274,14 @@ async function loadGuestCsv(config) {
         const url = new URL(csvUrl, window.location.href);
         if (csvVersion) url.searchParams.set('v', String(csvVersion));
 
+        console.log('Loading CSV from:', url.toString());
         const res = await fetch(url.toString(), { cache: 'no-store' });
+        console.log('Response status:', res.status);
         if (!res.ok) throw new Error(`Failed to load guests.csv (${res.status})`);
         const text = await res.text();
+        console.log('CSV text length:', text.length);
         const rows = parseCsv(text);
+        console.log('Parsed rows count:', rows.length);
 
         if (rows.length < 2) {
             showStatusMessage('Guest list is empty or missing headers.');
